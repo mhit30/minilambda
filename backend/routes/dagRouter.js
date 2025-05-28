@@ -1,6 +1,7 @@
 const express = require("express");
 
 const { dagQueue, connection } = require("../dagJob/dagQueue");
+const DagModel = require("../models/dagModel");
 
 function findRootNodes(nodes) {
   return nodes.filter((node) => !node.dependsOn || node.dependsOn.length === 0);
@@ -16,7 +17,15 @@ dagRouter.post("/", async (req, res) => {
     if (!name || !nodes) {
       return res.status(400).json({ error: "Missing DAG name or nodes." });
     }
+
     const dagId = uuidv4();
+
+    // create a dag document
+    await DagModel.create({
+      dagId: dagId,
+      name: name,
+    });
+
     await connection.set(
       `dag:${dagId}`,
       JSON.stringify({ dagId, name, nodes })
@@ -35,7 +44,7 @@ dagRouter.post("/", async (req, res) => {
         input: node.input,
       });
     }
-    return res.status(200).json({ message: "Dag submmited", dagId });
+    return res.status(200).json({ message: "Dag submmited with id: ", dagId });
   } catch (err) {
     console.log(err.message);
     res.status(500).json({ error: "Internal server error." });
@@ -44,6 +53,12 @@ dagRouter.post("/", async (req, res) => {
 
 dagRouter.get("/:id", async (req, res) => {
   const dagId = req.params.id;
+  try {
+    const dag = await DagModel.findOne({ dagId: dagId });
+    res.status(200).json({ dag: dag });
+  } catch (err) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 });
 
 module.exports = dagRouter;

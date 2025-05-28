@@ -9,7 +9,7 @@ const connection = new IORedis(process.env.REDIS_URL, {
 // create a  queue with a job retry strategy
 const dagQueue = new Queue("dagQueue", {
   defaultJobOptions: {
-    attempts: 1,
+    attempts: 3,
     backoff: {
       type: "exponential",
       delay: 1000,

@@ -9,9 +9,7 @@ const jobSchema = new mongoose.Schema(
       enum: ["waiting", "active", "completed", "failed", "skipped"],
       required: true,
     },
-    dependsOn: {
-      type: String,
-    },
+    dependsOn: [String],
     input: { type: Object }, // whatever data you accept
     result: { type: Object },
     failedReason: { type: String },
@@ -23,6 +21,4 @@ const jobSchema = new mongoose.Schema(
   { _id: false }
 );
 
-const JobModel = mongoose.model("JobModel", jobSchema);
-
-module.exports = { JobModel, jobSchema };
+module.exports = jobSchema;
