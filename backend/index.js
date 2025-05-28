@@ -14,9 +14,12 @@ app.use(express.json());
 const { initSocket } = require("./socket");
 initSocket(server);
 const imgResizeQueueEvents = require("./imgJob/imgResizeQueueEvents");
+const dagQueueEvents = require("./dagJob/dagQueueEvents");
 
 const jobRouter = require("./routes/jobRouter");
 app.use("/imgJob", jobRouter);
+const dagRouter = require("./routes/dagRouter");
+app.use("/dag", dagRouter);
 
 const PORT = process.env.PORT || 3001;
 const MONGO_URI =
