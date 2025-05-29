@@ -1,10 +1,7 @@
 const { QueueEvents } = require("bullmq");
 const { connection } = require("./dagQueue");
 
-const dagQueueEvents = new QueueEvents("dagQueue", { connection });
-
 const DagModel = require("../models/dagModel");
-const { JobModel } = require("../models/jobModel");
 
 async function dagReport(dagId, dag, nodeOutputs, isSuccess = true) {
   // get the name of the dag

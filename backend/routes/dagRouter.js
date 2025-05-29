@@ -61,4 +61,16 @@ dagRouter.get("/:id", async (req, res) => {
   }
 });
 
+dagRouter.get("/:dagId/node/:nodeId", async (req, res) => {
+  const dagId = req.params.dagId;
+  const nodeId = req.params.nodeId;
+  try {
+    const dag = await DagModel.findOne({ dagId: dagId });
+    const node = dag.jobs.find((n) => n.type === nodeId);
+    res.status(200).json({ node: node });
+  } catch (err) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 module.exports = dagRouter;
