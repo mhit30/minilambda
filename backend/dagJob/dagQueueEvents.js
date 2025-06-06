@@ -9,7 +9,6 @@ dagQueueEvents.on("completed", async ({ jobId, returnvalue }) => {
     const job = await dagQueue.getJob(jobId);
     const { attemptsMade } = job;
     const { dagId, nodeId } = job.data;
-    console.log(dagId);
     // save the output as a string
     await connection.set(
       `dag:${dagId}:node:${nodeId}:output`,
@@ -65,9 +64,7 @@ dagQueueEvents.on("completed", async ({ jobId, returnvalue }) => {
           type: node.type,
           input: node.input,
         });
-        console.log(
-          `📦 QueueEvents Enqueued ${node.id} after ${deps.join(", ")}`
-        );
+        console.log(`QueueEvents Enqueued ${node.id} after ${deps.join(", ")}`);
       }
     }
 

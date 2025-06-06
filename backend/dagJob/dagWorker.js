@@ -12,7 +12,6 @@ const jobHandlers = {
     const data = await res.json();
     return data;
   },
-
   "prompt-ai": async (input) => {
     // Simple fake summarizer for now — later plug in OpenAI or Hugging Face
     // get the previous output
@@ -67,10 +66,9 @@ const worker = new Worker(
 
     // put dagId in input object for ease of access in later job handlers
     input.dagId = dagId;
-
     const output = await handler(input);
 
-    console.log(`✅ Node ${nodeId} for dag ${dagId} completed`);
+    console.log(`Node ${nodeId} for dag ${dagId} completed`);
 
     return output;
   },
@@ -79,7 +77,7 @@ const worker = new Worker(
 
 // listen to worker
 worker.on("active", (job) => {
-  console.log(`🚀 Job ${job.id} started`);
+  console.log(`Job ${job.id} started`);
 });
 
 worker.on("completed", (job) => {
@@ -87,7 +85,7 @@ worker.on("completed", (job) => {
 });
 
 worker.on("failed", (job, err) => {
-  console.error(`Job ${job.id} failed: CHANGE TO SHOW`);
+  console.error(`Job ${job.id} failed: ${err}`);
 });
 
 worker.on("error", (err) => {
