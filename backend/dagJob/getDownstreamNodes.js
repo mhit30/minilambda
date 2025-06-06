@@ -1,4 +1,4 @@
-function getDownstreamNodes(failedNodeId, dag) {
+function getDownstreamNodes(root, dag) {
   const downstream = new Set();
   function dfs(nodeId) {
     for (const node of dag.nodes) {
@@ -13,8 +13,8 @@ function getDownstreamNodes(failedNodeId, dag) {
       }
     }
   }
-  dfs(failedNodeId);
-  downstream.delete(failedNodeId);
+  dfs(root);
+  downstream.delete(root);
   return Array.from(downstream);
 }
 

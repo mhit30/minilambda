@@ -2,7 +2,6 @@ const express = require("express");
 const http = require("http");
 const cors = require("cors");
 const mongoose = require("mongoose");
-const imgResizeQueue = require("./imgJob/imgResizeQueue");
 require("dotenv").config();
 
 const app = express();
@@ -13,11 +12,12 @@ app.use(express.json());
 // initilize the socket
 const { initSocket } = require("./socket");
 initSocket(server);
-const imgResizeQueueEvents = require("./imgJob/imgResizeQueueEvents");
 const dagQueueEvents = require("./dagJob/dagQueueEvents");
-
 const dagRouter = require("./routes/dagRouter");
 app.use("/dag", dagRouter);
+
+// const { main } = require("./utils/gemini");
+// main();
 
 const PORT = process.env.PORT || 3001;
 const MONGO_URI =

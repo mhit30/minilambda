@@ -1,6 +1,3 @@
-const { QueueEvents } = require("bullmq");
-const { connection } = require("./dagQueue");
-
 const DagModel = require("../models/dagModel");
 
 async function dagReport(dagId, dag, nodeOutputs, isSuccess = true) {
