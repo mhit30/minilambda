@@ -1,5 +1,4 @@
 const { Server } = require("socket.io");
-const imgResizeQueue = require("./imgJob/imgResizeQueue");
 
 let io;
 

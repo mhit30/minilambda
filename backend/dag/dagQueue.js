@@ -1,8 +1,8 @@
 const { Queue } = require("bullmq");
 const IORedis = require("ioredis");
-require("dotenv").config();
+const appConfig = require("../config/appConfig");
 
-const connection = new IORedis(process.env.REDIS_URL, {
+const connection = new IORedis(appConfig.REDIS_URL, {
   maxRetriesPerRequest: null,
 });
 

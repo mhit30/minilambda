@@ -1,9 +1,10 @@
 const { QueueEvents } = require("bullmq");
 const { dagQueue, connection } = require("./dagQueue");
-const getDownstreamNodes = require("./getDownstreamNodes");
+const getDownstreamNodes = require("../utils/getDownstreamNodes");
 const dagQueueEvents = new QueueEvents("dagQueue", { connection });
-const dagReport = require("./dagReport");
-const gatherDagOutputs = require("./gatherDagOutputs");
+const dagReport = require("../utils/dagReport");
+const gatherDagOutputs = require("../utils/gatherDagOutputs");
+const checkNodeReady = require("../utils/checkNodeReady");
 
 // When any dag-step job completes
 dagQueueEvents.on("completed", async ({ jobId, returnvalue }) => {
@@ -41,25 +42,11 @@ dagQueueEvents.on("completed", async ({ jobId, returnvalue }) => {
       node.dependsOn?.includes(nodeId)
     );
 
-    // for each node that dependened on the node that just completed
+    // for each node that depended on the node that just completed
     for (const node of dependents) {
-      // get its depdents
-      const deps = node.dependsOn;
-
-      // Check if all of its dependents are marked as completed
-      const allDepsDone = await Promise.all(
-        deps.map(async (depNodeId) => {
-          const status = await connection.get(
-            `dag:${dagId}:node:${depNodeId}:status`
-          );
-          return status === "completed";
-        })
-      );
-
-      // if so it is ready, i.e. all elems in the array are true
-      const ready = allDepsDone.every(Boolean);
-
-      // enque that node
+      // if the node is ready
+      const ready = await checkNodeReady(node, dagId, connection);
+      // enqueue that node
       if (ready) {
         await dagQueue.add("dagQueue", {
           dagId,
@@ -67,7 +54,11 @@ dagQueueEvents.on("completed", async ({ jobId, returnvalue }) => {
           type: node.type,
           input: node.input,
         });
-        console.log(`QueueEvents Enqueued ${node.id} after ${deps.join(", ")}`);
+        console.log(
+          `QueueEvents Enqueued ${node.id} after ${dependents
+            .map((dep) => dep.id)
+            .join(", ")}`
+        );
       }
     }
 
@@ -106,16 +97,19 @@ dagQueueEvents.on("failed", async ({ jobId, failedReason }) => {
     if (!rawDag) return;
 
     const dag = JSON.parse(rawDag);
-    const skipedNodes = getDownstreamNodes(nodeId, dag);
+    const skippedNodes = getDownstreamNodes(nodeId, dag);
 
-    for (const skipedNode of skipedNodes) {
-      await connection.set(`dag:${dagId}:node:${skipedNode}:status`, "skipped");
+    for (const skippedNode of skippedNodes) {
       await connection.set(
-        `dag:${dagId}:node:${skipedNode}:output`,
+        `dag:${dagId}:node:${skippedNode}:status`,
+        "skipped"
+      );
+      await connection.set(
+        `dag:${dagId}:node:${skippedNode}:output`,
         `Dependency: ${nodeId} failed.`
       );
-      await connection.set(`dag:${dagId}:node:${skipedNode}:attemptsMade`, 0);
-      // max attempts ommited
+      await connection.set(`dag:${dagId}:node:${skippedNode}:attemptsMade`, 0);
+      // max attempts omitted
     }
 
     const { isFinished, outputs } = await gatherDagOutputs(
