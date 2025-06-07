@@ -1,4 +1,6 @@
-async function resolveTemplate(templateStr, dagId) {
+const { connection } = require("../dag/dagQueue");
+
+async function resolveTemplate(dagId, templateStr) {
   // Match all expressions like {{stepId.output.key}}
   const regex = /\{\{(.+?)\}\}/g;
 
@@ -30,7 +32,6 @@ async function resolveTemplate(templateStr, dagId) {
   matches.forEach((match, index) => {
     result = result.replace(match[0], resolvedPieces[index]);
   });
-
   return result;
 }
 

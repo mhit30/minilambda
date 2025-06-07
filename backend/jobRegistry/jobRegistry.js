@@ -1,9 +1,16 @@
+const resolveTemplate = require("../utils/resolveTemplate");
 const { basicPrompt } = require("./promptAi");
 
 const jobRegistry = {
-  "prompt-step": async (input) => {
-    const promptOutput = await basicPrompt(input.prompt);
-    return { output: `AI Output: ${promptOutput}` };
+  "prompt-step": async (dagId, input, deps) => {
+    let output;
+    if (deps.length === 0) {
+      output = await basicPrompt(input.prompt);
+    } else {
+      resolver = await resolveTemplate(dagId, input.prompt);
+      output = await basicPrompt(resolver);
+    }
+    return output;
   },
 };
 

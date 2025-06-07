@@ -6,17 +6,15 @@ require("dotenv").config({ path: "../.env" });
 const worker = new Worker(
   "dagQueue",
   async (job) => {
-    const { dagId, nodeId, type, input } = job.data;
+    const { dagId, nodeId, type, input, deps } = job.data;
     const handler = jobRegistry[type];
     if (!handler) throw new Error(`Unknown job type: ${type}`);
 
-    // put dagId in input object for ease of access in later job handlers
-    input.dagId = dagId;
-    const output = await handler(input);
-
+    const output = await handler(dagId, input, deps);
     console.log(`Node ${nodeId} for dag ${dagId} completed`);
-
-    return output;
+    return {
+      body: output,
+    };
   },
   { connection }
 );
