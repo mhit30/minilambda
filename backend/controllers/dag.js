@@ -37,6 +37,7 @@ async function createDag(req, res) {
         nodeId: node.id,
         type: node.type,
         input: node.input,
+        deps: [],
       });
     }
     return res.status(200).json({ message: `Dag submitted with id: ${dagId}` });

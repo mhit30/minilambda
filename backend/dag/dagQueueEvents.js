@@ -36,7 +36,6 @@ dagQueueEvents.on("completed", async ({ jobId, returnvalue }) => {
 
     // parse string dag into json
     const dag = JSON.parse(rawDag);
-
     // find all the nodes that depended on the node that just completed
     const dependents = dag.nodes.filter((node) =>
       node.dependsOn?.includes(nodeId)
@@ -53,6 +52,7 @@ dagQueueEvents.on("completed", async ({ jobId, returnvalue }) => {
           nodeId: node.id,
           type: node.type,
           input: node.input,
+          deps: node.dependsOn,
         });
         console.log(
           `QueueEvents Enqueued ${node.id} after ${dependents
