@@ -16,9 +16,6 @@ const dagRouter = require("./routes/dagRouter");
 const appConfig = require("./config/appConfig");
 app.use("/dag", dagRouter);
 
-// const { main } = require("./utils/gemini");
-// main();
-
 mongoose.connect(appConfig.MONGO_URI).then(() => {
   console.log("MongoDB connected");
   server.listen(appConfig.PORT, () => {

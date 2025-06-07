@@ -10,7 +10,7 @@ const worker = new Worker(
     const handler = jobRegistry[type];
     if (!handler) throw new Error(`Unknown job type: ${type}`);
 
-    const output = await handler(dagId, input, deps);
+    const output = await handler(dagId, nodeId, input, deps);
     console.log(`Node ${nodeId} for dag ${dagId} completed`);
     return {
       body: output,

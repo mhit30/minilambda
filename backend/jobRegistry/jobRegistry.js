@@ -1,8 +1,10 @@
 const resolveTemplate = require("../utils/resolveTemplate");
 const { basicPrompt } = require("./promptAi");
+const { generateImage } = require("./generateImage");
+const { uploadBuffer } = require("../utils/s3/uploadBuffer");
 
 const jobRegistry = {
-  "prompt-step": async (dagId, input, deps) => {
+  "prompt-step": async (dagId, nodeId, input, deps) => {
     let output;
     if (deps.length === 0) {
       output = await basicPrompt(input.prompt);
@@ -12,7 +14,16 @@ const jobRegistry = {
     }
     return output;
   },
+  "generate-image": async (dagId, nodeId, input, deps) => {
+    let outputBuffer;
+    if (deps.length === 0) {
+      outputBuffer = await generateImage(input.prompt);
+    } else {
+      output = await resolveTemplate(dagId, input.prompt);
+      outputBuffer = await generateImage(output);
+    }
+    await uploadBuffer(dagId, nodeId, outputBuffer);
+  },
 };
 
-// Prompt AI for Summary of Wikipedia URL, Generate a PDF, Send the PDF to me
 module.exports = jobRegistry;
