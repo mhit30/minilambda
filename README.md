@@ -1,7 +1,7 @@
 # 🛠️ MiniLambda
 
 <div align="center">
-  <img src="./frontend/public/babylambda.svg" width="40%;" alt="QuickKanban logo"/>
+  <img src="./babylambda.svg" width="40%;" alt="QuickKanban logo"/>
 </div>
 
 <div align="center">
