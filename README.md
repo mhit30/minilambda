@@ -19,7 +19,7 @@
 
 ## Overview
 
-A serverless job orchestrator allowing developers to submit jobs and see real time updates. After the entire pipeline is executed, a report is generated about the overall success or failure of the pipeline, as well as each job's results.
+A job orchestrator allowing developers to submit multi-step, multi-model, dependency-based AI/LLM job pipelines. After the entire pipeline is executed, a report is generated about the overall success or failure of the pipeline, as well as each job's results.
 
 ## Features
 
