@@ -2,6 +2,7 @@ const resolveTemplate = require("../utils/resolveTemplate");
 const { basicPrompt } = require("./promptAi");
 const { generateImage } = require("./generateImage");
 const { uploadBuffer } = require("../utils/s3/uploadBuffer");
+const getSignedFileUrl = require("../utils/s3/getSignedFileUrl");
 
 const jobRegistry = {
   "prompt-step": async (dagId, nodeId, input, deps) => {
@@ -16,13 +17,20 @@ const jobRegistry = {
   },
   "generate-image": async (dagId, nodeId, input, deps) => {
     let outputBuffer;
+    let outputText;
     if (deps.length === 0) {
-      outputBuffer = await generateImage(input.prompt);
+      ({ buffer: outputBuffer, text: outputText } = await generateImage(
+        input.prompt
+      ));
     } else {
       output = await resolveTemplate(dagId, input.prompt);
-      outputBuffer = await generateImage(output);
+      ({ buffer: outputBuffer, text: outputText } = await generateImage(
+        output
+      ));
     }
-    await uploadBuffer(dagId, nodeId, outputBuffer);
+    const key = await uploadBuffer(dagId, nodeId, outputBuffer);
+    const signedUrl = await getSignedFileUrl(key);
+    return { signedUrl: signedUrl, text: outputText };
   },
 };
 
