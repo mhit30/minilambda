@@ -11,7 +11,6 @@
 [![BullMQ](https://img.shields.io/badge/BullMQ-FF0000?style=for-the-badge)](https://docs.bullmq.io/)
 [![Express.js](https://img.shields.io/badge/Express.js-404D59?logo=express&style=for-the-badge)](https://expressjs.com/)
 [![MongoDB](https://img.shields.io/badge/MongoDB-4ea94b?logo=mongodb&logoColor=white&style=for-the-badge)](https://www.mongodb.com/)
-[![Chakra UI](https://img.shields.io/badge/Chakra%20UI-319795?logo=chakraui&logoColor=white&style=for-the-badge)](https://chakra-ui.com/)
 
 </div>
 
